@@ -1,8 +1,9 @@
 import java.util.*;
 
 class DijkstraExample {
+    // Класс для представления ребра графа
     static class Edge {
-        int to, weight;
+        int to, weight; // вершина назначения и вес ребра
         Edge(int to, int weight) {
             this.to = to;
             this.weight = weight;
@@ -10,11 +11,11 @@ class DijkstraExample {
     }
 
     public static void main(String[] args) {
-        int n = 5; // количество вершин
+        int n = 5; // количество вершин в графе
         List<List<Edge>> graph = new ArrayList<>();
         for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
 
-        // добавляем ребра (ориентированный граф)
+        // Добавляем рёбра (ориентированный граф с весами)
         graph.get(0).add(new Edge(1, 10));
         graph.get(0).add(new Edge(2, 3));
         graph.get(1).add(new Edge(2, 1));
@@ -25,9 +26,10 @@ class DijkstraExample {
         graph.get(3).add(new Edge(4, 7));
         graph.get(4).add(new Edge(3, 9));
 
-        int start = 0;
-        int[] dist = dijkstra(graph, start);
+        int start = 0; // стартовая вершина
+        int[] dist = dijkstra(graph, start); // запуск алгоритма
 
+        // Выводим результат
         System.out.println("Кратчайшие расстояния от вершины " + start + ":");
         for (int i = 0; i < n; i++) {
             System.out.println(start + " -> " + i + " = " + dist[i]);
@@ -37,23 +39,25 @@ class DijkstraExample {
     // Алгоритм Дейкстры
     static int[] dijkstra(List<List<Edge>> graph, int start) {
         int n = graph.size();
-        int[] dist = new int[n];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[start] = 0;
+        int[] dist = new int[n]; // массив расстояний
+        Arrays.fill(dist, Integer.MAX_VALUE); // изначально все недостижимы
+        dist[start] = 0; // стартовая вершина имеет расстояние 0
 
+        // Очередь с приоритетом (минимальная по весу)
         PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
         pq.add(new int[]{start, 0});
 
         while (!pq.isEmpty()) {
             int[] cur = pq.poll();
-            int v = cur[0];
-            int d = cur[1];
-            if (d > dist[v]) continue;
+            int v = cur[0]; // текущая вершина
+            int d = cur[1]; // расстояние до неё
+            if (d > dist[v]) continue; // если уже нашли лучший путь
 
+            // Рассматриваем все исходящие рёбра
             for (Edge e : graph.get(v)) {
                 if (dist[v] + e.weight < dist[e.to]) {
-                    dist[e.to] = dist[v] + e.weight;
-                    pq.add(new int[]{e.to, dist[e.to]});
+                    dist[e.to] = dist[v] + e.weight; // обновляем расстояние
+                    pq.add(new int[]{e.to, dist[e.to]}); // кладём в очередь
                 }
             }
         }
