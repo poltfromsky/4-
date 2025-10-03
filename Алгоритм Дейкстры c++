@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Edge {
+    int to, weight;
+};
+
+vector<int> dijkstra(int n, vector<vector<Edge>>& graph, int start) {
+    vector<int> dist(n, INT_MAX);
+    dist[start] = 0;
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        auto [d, v] = pq.top(); pq.pop();
+        if (d > dist[v]) continue;
+
+        for (auto& e : graph[v]) {
+            if (dist[v] + e.weight < dist[e.to]) {
+                dist[e.to] = dist[v] + e.weight;
+                pq.push({dist[e.to], e.to});
+            }
+        }
+    }
+    return dist;
+}
+
+int main() {
+    int n = 5;
+    vector<vector<Edge>> graph(n);
+
+    // добавляем ребра
+    graph[0].push_back({1, 10});
+    graph[0].push_back({2, 3});
+    graph[1].push_back({2, 1});
+    graph[1].push_back({3, 2});
+    graph[2].push_back({1, 4});
+    graph[2].push_back({3, 8});
+    graph[2].push_back({4, 2});
+    graph[3].push_back({4, 7});
+    graph[4].push_back({3, 9});
+
+    int start = 0;
+    vector<int> dist = dijkstra(n, graph, start);
+
+    cout << "Кратчайшие расстояния от вершины " << start << ":\n";
+    for (int i = 0; i < n; i++) {
+        cout << start << " -> " << i << " = " << dist[i] << "\n";
+    }
+}
