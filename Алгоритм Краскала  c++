@@ -1,18 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Структура ребра
 struct Edge {
     int u, v, weight;
     bool operator<(const Edge& other) const {
-        return weight < other.weight;
+        return weight < other.weight; // сортировка по весу
     }
 };
 
+// Поиск сжатия путей (DSU)
 int find(vector<int>& parent, int x) {
     if (parent[x] != x) parent[x] = find(parent, parent[x]);
     return parent[x];
 }
 
+// Объединение множеств
 void unite(vector<int>& parent, int a, int b) {
     a = find(parent, a);
     b = find(parent, b);
@@ -29,15 +32,15 @@ int main() {
         {2, 3, 4}
     };
 
-    sort(edges.begin(), edges.end());
+    sort(edges.begin(), edges.end()); // сортировка рёбер по весу
     vector<int> parent(n);
-    for (int i = 0; i < n; i++) parent[i] = i;
+    for (int i = 0; i < n; i++) parent[i] = i; // инициализация DSU
 
     int mstWeight = 0;
     cout << "Ребра в минимальном остовном дереве:\n";
     for (auto& e : edges) {
         if (find(parent, e.u) != find(parent, e.v)) {
-            unite(parent, e.u, e.v);
+            unite(parent, e.u, e.v); // объединяем множества
             mstWeight += e.weight;
             cout << e.u << " - " << e.v << " : " << e.weight << "\n";
         }
