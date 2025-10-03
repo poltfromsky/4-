@@ -1,0 +1,62 @@
+import java.util.*;
+
+class DijkstraExample {
+    static class Edge {
+        int to, weight;
+        Edge(int to, int weight) {
+            this.to = to;
+            this.weight = weight;
+        }
+    }
+
+    public static void main(String[] args) {
+        int n = 5; // количество вершин
+        List<List<Edge>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
+
+        // добавляем ребра (ориентированный граф)
+        graph.get(0).add(new Edge(1, 10));
+        graph.get(0).add(new Edge(2, 3));
+        graph.get(1).add(new Edge(2, 1));
+        graph.get(1).add(new Edge(3, 2));
+        graph.get(2).add(new Edge(1, 4));
+        graph.get(2).add(new Edge(3, 8));
+        graph.get(2).add(new Edge(4, 2));
+        graph.get(3).add(new Edge(4, 7));
+        graph.get(4).add(new Edge(3, 9));
+
+        int start = 0;
+        int[] dist = dijkstra(graph, start);
+
+        System.out.println("Кратчайшие расстояния от вершины " + start + ":");
+        for (int i = 0; i < n; i++) {
+            System.out.println(start + " -> " + i + " = " + dist[i]);
+        }
+    }
+
+    // Алгоритм Дейкстры
+    static int[] dijkstra(List<List<Edge>> graph, int start) {
+        int n = graph.size();
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[start] = 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
+        pq.add(new int[]{start, 0});
+
+        while (!pq.isEmpty()) {
+            int[] cur = pq.poll();
+            int v = cur[0];
+            int d = cur[1];
+            if (d > dist[v]) continue;
+
+            for (Edge e : graph.get(v)) {
+                if (dist[v] + e.weight < dist[e.to]) {
+                    dist[e.to] = dist[v] + e.weight;
+                    pq.add(new int[]{e.to, dist[e.to]});
+                }
+            }
+        }
+        return dist;
+    }
+}
